@@ -1,0 +1,27 @@
+name: Build & Deploy Spring Boot WAR
+
+on:
+  push:
+    branches: [ main ]  # or your working branch
+
+jobs:
+  build-deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Build WAR with Maven
+        run: mvn clean package -DskipTests
+
+      - name: Deploy WAR
+        run: |
+          cp target/*.war /opt/app/backend.war
+          sudo systemctl restart myapp
